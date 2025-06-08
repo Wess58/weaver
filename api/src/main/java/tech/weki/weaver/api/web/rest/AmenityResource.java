@@ -11,11 +11,13 @@ import tech.weki.weaver.api.domain.Amenity;
 import tech.weki.weaver.api.service.AmenityService;
 import tech.weki.weaver.api.web.util.PaginationUtil;
 
+import java.net.URI;
 import java.util.List;
 
 @Slf4j
 @RestController
 public class AmenityResource {
+    private final String BASE_URL = "/api/amenities";
     private final AmenityService amenityService;
 
     public AmenityResource(AmenityService amenityService) {
@@ -26,7 +28,7 @@ public class AmenityResource {
     public ResponseEntity<Amenity> save(@RequestBody Amenity amenity) {
         log.debug("REST request to save amenity: {}", amenity);
         amenity = amenityService.save(amenity);
-        return ResponseEntity.ok(amenity);
+        return ResponseEntity.created(URI.create(BASE_URL + "/" + amenity.getId())).body(amenity);
     }
 
     @GetMapping("/amenities")
