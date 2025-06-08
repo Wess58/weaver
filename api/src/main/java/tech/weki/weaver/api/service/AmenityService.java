@@ -1,7 +1,7 @@
 package tech.weki.weaver.api.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import tech.weki.weaver.api.domain.Amenity;
 import tech.weki.weaver.api.error.EntityNotFoundException;
@@ -32,12 +32,17 @@ public class AmenityService {
         return amenityRepository.save(amenity);
     }
 
-    public List<Amenity> findAll() {
+    public Page<Amenity> findAll(String name, Pageable pageable) {
         log.debug("Request to find all amenities");
 
-        Sort sort = Sort.by(Sort.Direction.ASC);
+        Amenity probe = getProbe(name);
 
-        return amenityRepository.findAll(sort);
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+
+        Example<Amenity> example = Example.of(probe, matcher);
+
+        return amenityRepository.findAll(example, pageable);
     }
 
     public Amenity findOne(Long id) {
@@ -71,7 +76,7 @@ public class AmenityService {
     }
 
 
-    public void validate(Amenity amenity, boolean update) {
+    private void validate(Amenity amenity, boolean update) {
         if (amenity.getName() == null || amenity.getName().isEmpty()) {
             throw new RequestValidationException("name cannot be null or empty");
         }
@@ -81,5 +86,15 @@ public class AmenityService {
                 throw new RequestValidationException("Id cannot be null when doing an update");
             }
         }
+    }
+
+    private Amenity getProbe(String name) {
+        Amenity amenity = new Amenity();
+
+        if (name != null && !name.isEmpty()) {
+            amenity.setName(name);
+        }
+
+        return amenity;
     }
 }

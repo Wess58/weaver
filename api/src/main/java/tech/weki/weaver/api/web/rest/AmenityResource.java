@@ -1,10 +1,15 @@
 package tech.weki.weaver.api.web.rest;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.weki.weaver.api.domain.Amenity;
 import tech.weki.weaver.api.service.AmenityService;
+import tech.weki.weaver.api.web.util.PaginationUtil;
 
 import java.util.List;
 
@@ -25,10 +30,11 @@ public class AmenityResource {
     }
 
     @GetMapping("/amenities")
-    public ResponseEntity<List<Amenity>> findAll() {
+    public ResponseEntity<List<Amenity>> findAll(@RequestParam(name = "name", required = false) String name, Pageable pageable) {
         log.debug("REST request to find all amenities");
-        List<Amenity> amenities = amenityService.findAll();
-        return ResponseEntity.ok(amenities);
+        Page<Amenity> page = amenityService.findAll(name, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/amenities");
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     @GetMapping("/amenities/{id}")
