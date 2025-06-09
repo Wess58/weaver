@@ -1,4 +1,125 @@
 /* You can add global styles to this file, and also import other style files */
+@use "@angular/material" as mat;
+@import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+@import "./assets/css/font-montserrat.css";
+@import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
+@import url("https://fonts.googleapis.com/css2?family=Fascinate&display=swap");
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+:root {
+  --app-orange: #f08121;
+  --app-lime-green: #ceef83;
+}
+
+html,
+body {
+  height: 100%;
+  min-height: 100vh;
+  color-scheme: dark;
+  //   color-scheme: light;
+
+  @include mat.theme(
+    (
+      color: mat.$orange-palette,
+      typography: Montserrat,
+      density: -2,
+    )
+  );
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden !important;
+
+  font-family: "Montserrat", sans-serif;
+  letter-spacing: 1px;
+  scroll-behavior: smooth !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  min-height: 100vh;
+  text-rendering: optimizeSpeed;
+  color: #5f6063;
+  //   background-color: #fbfbfb;
+
+  .dark-mode {
+    color-scheme: dark;
+  }
+}
+
+.outlet {
+  min-height: 100vh;
+}
+
+* a,
+* button {
+  outline: none !important;
+  box-shadow: none !important;
+  text-decoration: none;
+}
+
+input,
+select,
+textarea {
+  border: 2px solid #e1e1e1 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background-clip: padding-box !important;
+  color: #5f6063 !important;
+}
+
+input:active,
+input:focus,
+input:hover,
+select:active,
+select:focus,
+select:hover,
+textarea:active,
+textarea:focus,
+textarea:hover {
+  border: 2px solid #003d4c !important;
+}
+
+input[type="checkbox"] {
+  z-index: 100;
+}
+
+img::selection {
+  background-color: transparent !important;
+}
+
+* img {
+  user-drag: none !important;
+  user-select: none !important;
+  -moz-user-select: none !important;
+  -webkit-user-drag: none !important;
+  -webkit-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #80868b99 !important;
+  opacity: 1;
+  font-family: "Montserrat", sans-serif !important;
+  /* Firefox */
+}
+
+:-ms-input-placeholder {
+  /* Internet Explorer 10-11 */
+  color: #80868b99 !important;
+  font-family: "Montserrat", sans-serif !important;
+}
+
+::-ms-input-placeholder {
+  /* Microsoft Edge */
+  color: #80868b99 !important;
+  font-family: "Montserrat", sans-serif !important;
+}
+
+.container-fluid {
+  padding: 0;
+}

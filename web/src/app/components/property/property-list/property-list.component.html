@@ -1,4 +1,81 @@
-<mat-slider min="200" max="500">
-	<input value="300" matSliderStartThumb>
-	<input value="400" matSliderEndThumb>
-</mat-slider>
+<div class="container-fluid">
+
+	<!-- LANDING SECTION  -->
+	<main class="landing-section">
+		<div class="container">
+			<div class="content">
+				<h1>Step Inside Your Next Home <br> See It. Feel It. Live It.</h1>
+				<!-- <p>
+					Explore properties built around your life, not just your budget with our virtual walkthroughs that
+					bring spaces to life.
+				</p> -->
+			</div>
+
+
+
+			<div class="filter-wrap">
+				<div class="top-deck"></div>
+				<div class="bottom-deck">
+					<div class="wrap">
+						<label for="location">Location</label>
+						<input type="text" class="form-control" [(ngModel)]="filters.location" autocomplete="off">
+					</div>
+					<div class="wrap">
+						<label for="location">Price Range</label>
+						<input type="text" class="form-control" [(ngModel)]="filters.location" autocomplete="off">
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<div class="property-listing">
+
+		<h4 class="listing-title">Featured homes </h4>
+
+		<div class="row">
+			@for (property of properties; track $index) {
+			<div class="col-md-2">
+				<!-- *ngFor="let property of properties;index as i" -->
+				<div class="card property-item">
+
+					<div class="property-bookmark">
+						<div class="position-relative">
+							<span class="icon"><i class="fa-regular fa-bookmark"></i></span>
+							<img src="assets/images/curvy-edge.svg" alt="icon-bg">
+						</div>
+					</div>
+
+					<div class="image-holder">
+						<img [src]="property.imageUrl" alt="photo">
+					</div>
+
+					<a class="property-content-wrapper" [routerLink]="['/property',property.id]">
+						<div class="property-content">
+							<h5 class="property-title">
+								{{ (property.name?.length ? property.name : property.type) + " in " + property.location
+								}}
+							</h5>
+							<div class="d-flex justify-content-between">
+								<span class="property-price">
+									{{ property.price | currency: '' + 'KES ':'symbol':'1.0-0'}}
+								</span>
+								<span class="property-rooms"> {{property.rooms + " Bedrooms"}} </span>
+							</div>
+						</div>
+					</a>
+
+				</div>
+			</div>
+			}
+		</div>
+
+	</div>
+
+</div>
+<div class="container pt-5 mt-5">
+	<mat-slider min="10000" max="100000" step="5000" showTickMarks [displayWith]="formatLabel">
+		<input value="10000" matSliderStartThumb>
+		<input value="50000" matSliderEndThumb>
+	</mat-slider>
+</div>

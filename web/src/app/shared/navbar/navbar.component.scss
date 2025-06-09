@@ -1,0 +1,19 @@
+.navbar {
+  background-color: transparent;
+  padding: 8px 20px;
+  height: 60px;
+
+  .navbar-brand {
+    font-weight: 600;
+    color: var(--app-orange);
+    font-family: "Fascinate", system-ui;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+}
+
+.scrolled {
+  background-color: #fff;
+  box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.05);
+}
