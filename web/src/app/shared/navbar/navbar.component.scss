@@ -5,11 +5,19 @@
 
   .navbar-brand {
     font-weight: 600;
-    color: var(--app-orange);
+    // color: var(--app-orange);
+    color: #fff;
     font-family: "Fascinate", system-ui;
     font-size: 2rem;
     letter-spacing: 2px;
     text-transform: uppercase;
+  }
+
+  .nav-item{
+    .nav-link{
+      color: #fff;
+      font-weight: 500;
+    }
   }
 }
 

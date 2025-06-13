@@ -10,7 +10,7 @@ import { Router, ActivatedRoute } from '@angular/router';
   animations: [
     trigger('fadeIn', [
       transition(':enter', [
-        // :enter is alias to 'void => *'
+      // :enter is alias to 'void => *'
         style({ opacity: 0 }),
         animate(400, style({ opacity: 1 })),
       ]),
@@ -25,7 +25,7 @@ export class NavbarComponent {
     // console.log($event);
     // console.log("scrolling", window.pageYOffset);
 
-    this.morphNavbar = (window.innerWidth > 770 && ((window.pageYOffset / window.innerHeight * 100) > 70)) || (window.innerWidth < 770 && ((window.pageYOffset / window.innerHeight * 100) > 60));
+    this.morphNavbar = (window.innerWidth > 770 && ((window.pageYOffset / window.innerHeight * 100) > 50)) || (window.innerWidth < 770 && ((window.pageYOffset / window.innerHeight * 100) > 60));
   }
 
   constructor(

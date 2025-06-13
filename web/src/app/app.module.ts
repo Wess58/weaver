@@ -6,11 +6,17 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { MatSliderModule } from '@angular/material/slider';
 import { PropertyListComponent } from './components/property/property-list/property-list.component';
 import { PropertyDetailComponent } from './components/property/property-detail/property-detail.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { FooterComponent } from './shared/footer/footer.component';
+import { FigureFormatterPipe } from './pipes/figure-formartter.pipe';
+import { NgmodelDebounceDirective } from './directives/ngmodel-debounce.directive';
+
+import { MatSliderModule } from '@angular/material/slider';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+
 
 @NgModule({
   declarations: [
@@ -18,14 +24,18 @@ import { FooterComponent } from './shared/footer/footer.component';
     PropertyListComponent,
     PropertyDetailComponent,
     NavbarComponent,
-    FooterComponent
+    FooterComponent,
+    FigureFormatterPipe,
+    NgmodelDebounceDirective
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    // BrowserAnimationsModule,
-    MatSliderModule
+    BrowserAnimationsModule,
+    MatSliderModule,
+    MatSlideToggleModule,
+    MatButtonModule
   ],
   providers: [
     // provideAnimations()

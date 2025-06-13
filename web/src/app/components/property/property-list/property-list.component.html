@@ -4,7 +4,8 @@
 	<main class="landing-section">
 		<div class="container">
 			<div class="content">
-				<h1>Step Inside Your Next Home <br> See It. Feel It. Live It.</h1>
+				<span class="desc">Step inside your next Home</span>
+				<h1>See It. Feel It. Live It.</h1>
 				<!-- <p>
 					Explore properties built around your life, not just your budget with our virtual walkthroughs that
 					bring spaces to life.
@@ -14,15 +15,135 @@
 
 
 			<div class="filter-wrap">
-				<div class="top-deck"></div>
+				<div class="top-deck">
+					<button class="btn btn-toggle" [ngClass]="{'active-toggle':currentToggle === 'all'}"
+						(click)="selectToggle('all')">All</button>
+					<button class="btn btn-toggle" [ngClass]="{'active-toggle':currentToggle === 'rent'}"
+						(click)="selectToggle('rent')">For Rent</button>
+					<button class="btn btn-toggle" [ngClass]="{'active-toggle':currentToggle === 'buy'}"
+						(click)="selectToggle('buy')">For Sale</button>
+				</div>
 				<div class="bottom-deck">
-					<div class="wrap">
-						<label for="location">Location</label>
-						<input type="text" class="form-control" [(ngModel)]="filters.location" autocomplete="off">
+					<div class="wrap" id="openLocation">
+						<label for="location" id="openLocation">Location</label>
+						<input type="text" class="form-control" name="location" id="openLocationInput"
+							[(ngModel)]="filters.location" (ngModelChange)="searchLocation()"
+							placeholder="Search locations" autocomplete="off">
+
+						<div class="search-res-listing" *ngIf="openLocation && filteredLocations?.length"
+							[@fadeInPopUp]>
+							<div class="search-item" *ngFor="let location of filteredLocations; index as i"
+								(click)="selectLocation(location)">
+								<span class="name">{{ location }} </span>
+							</div>
+						</div>
 					</div>
-					<div class="wrap">
-						<label for="location">Price Range</label>
-						<input type="text" class="form-control" [(ngModel)]="filters.location" autocomplete="off">
+					<div class="wrap" #priceWrap>
+						<label for="location">Price range </label>
+						@if (filters.supriseRange?.length) {
+						<span class="d-block place-holder"> {{filters.supriseRange}} </span>
+						} @else if (!filters.priceStart || !filters.priceEnd) {
+						<span class="d-block place-holder">
+							Select range
+							<span class="icon-down"><i class="fa-solid fa-caret-down"></i></span>
+						</span>
+						} @else{
+						<div class="uneditable-text">
+							<span class="figure">
+								{{filters.priceStart | currency: '' + 'KES ':'symbol':'1.0-0'}}
+							</span>
+							<span class="desc">to</span>
+							<span class="figure">
+								{{filters.priceEnd | currency: '' + 'KES ':'symbol':'1.0-0'}}
+							</span>
+						</div>
+						}
+
+
+						<div class="price-card" *ngIf="openPrice" (click)="$event.stopPropagation()" [@fadeInPopUp]>
+							<div class="price-inputs-box">
+								<div class="price-input">
+									<span class="desc">From </span>
+									<input type="text" class="form-control" name="priceStart"
+										(blur)="validateInputLimits('min')" [ngModelOptions]="{standalone:true}"
+										[(ngModel)]="filters.priceStart">
+									<!-- ngModelDebounceChange (ngModelDebounceChange)="checkPriceInputLimits('min')"
+										[timeout]="500" -->
+								</div>
+								<span class="hyphen">—</span>
+								<div class="price-input">
+									<span class="desc">To</span>
+									<input type="text" class="form-control" name="priceEnd"
+										(blur)="validateInputLimits('max')" [ngModelOptions]="{standalone:true}"
+										[(ngModel)]="filters.priceEnd">
+								</div>
+							</div>
+
+							<div class="range-options">
+								<div class="range-item" *ngFor="let range of priceRanges;index as i"
+									[ngClass]="{'active-range':checkIfActiveRange(range)}"
+									(click)="selectPriceRange(range)">
+									{{range[0] | currency: '' + 'KES ':'symbol':'1.0-0'}}
+									<span class="d-inline-block mx-2">to</span>
+									{{range[1] | currency: '' + 'KES ':'symbol':'1.0-0'}}
+								</div>
+								<div class="range-item" [ngClass]="{'active-range':filters.supriseRange?.length}"
+									(click)="selectPriceRange()">No budget, no limits!</div>
+							</div>
+
+							<!-- <mat-slider min="10000" max="1000000" step="" showTickMarks
+								(change)="updatePrice($event)" id="openPriceInput">
+								<input [(ngModel)]="filters.priceStart" matSliderStartThumb id="openPriceInput" value="10000">
+								<input [(ngModel)]="filters.priceEnd" matSliderEndThumb id="openPriceInput" value="100000">
+							</mat-slider> -->
+						</div>
+					</div>
+
+
+					<div class="wrap border-0" #roomsWrap>
+						<label for="location">Number of bedrooms</label>
+
+						@if (!filters.rooms) {
+						<span class="d-block place-holder">Select rooms <span class="icon-down"><i
+									class="fa-solid fa-caret-down"></i></span></span>
+						}@else{
+						<div class="uneditable-text">
+							<span class="figure">
+								{{filters.rooms + (filters.rooms > 1 ? " bedrooms" : " bedroom")}}
+							</span>
+						</div>
+						}
+
+						<div class="room-card" *ngIf="openRooms" (click)="$event.stopPropagation()" [@fadeInPopUp]>
+
+							<div class="plus-minus-inputs">
+								<div>
+									<span class="title">Bedrooms</span>
+								</div>
+								<div class="controls">
+									<button class="btn btn-minus" (click)="changeRoomsValues('minus')"
+										[disabled]="filters.rooms < 1">
+										<i class="fa-solid fa-minus"></i>
+									</button>
+									<span class="figure"> {{filters.rooms ?? 0 }} </span>
+									<button class="btn btn-plus" (click)="changeRoomsValues('plus')"
+										[disabled]="filters.rooms > 9 ">
+										<i class="fa-solid fa-plus"></i>
+									</button>
+								</div>
+							</div>
+
+							<mat-slide-toggle [(ngModel)]="filters.showOnlyAvailable" labelPosition="before">
+								Show only available properties
+							</mat-slide-toggle>
+						</div>
+					</div>
+					<div class="btn-wrap">
+						<button class="btn btn-search">
+							<span class="icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+							<span>Search</span>
+							<!-- *ngIf="checkIfFilterExists()" -->
+						</button>
 					</div>
 				</div>
 			</div>
@@ -33,9 +154,9 @@
 
 		<h4 class="listing-title">Featured homes </h4>
 
-		<div class="row">
+		<div class="grid-box">
 			@for (property of properties; track $index) {
-			<div class="col-md-2">
+			<div class="grid-item">
 				<!-- *ngFor="let property of properties;index as i" -->
 				<div class="card property-item">
 
@@ -50,17 +171,21 @@
 						<img [src]="property.imageUrl" alt="photo">
 					</div>
 
-					<a class="property-content-wrapper" [routerLink]="['/property',property.id]">
+					<a class="property-content-wrapper"
+						[routerLink]="['/property',(property.id ?? 1),slugify((property.name?.length ? property.name : property.type) + ' in ' + property.location)]">
 						<div class="property-content">
 							<h5 class="property-title">
 								{{ (property.name?.length ? property.name : property.type) + " in " + property.location
 								}}
 							</h5>
-							<div class="d-flex justify-content-between">
+							<div class="d-flex justify-content-between align-items-center">
 								<span class="property-price">
-									{{ property.price | currency: '' + 'KES ':'symbol':'1.0-0'}}
+									<!-- {{ property.price | currency: '' + 'KES ':'symbol':'1.0-0'}} -->
+									{{ 'KES ' + (property.price | figureFormatter)}}
+									<span class="fw-normal" *ngIf="property.isRental">/ month</span>
 								</span>
-								<span class="property-rooms"> {{property.rooms + " Bedrooms"}} </span>
+								<span class="property-rooms" [title]="property.rooms + ' Bedroom ' + property.type">
+									{{property.rooms + " BR"}} </span>
 							</div>
 						</div>
 					</a>
@@ -72,10 +197,4 @@
 
 	</div>
 
-</div>
-<div class="container pt-5 mt-5">
-	<mat-slider min="10000" max="100000" step="5000" showTickMarks [displayWith]="formatLabel">
-		<input value="10000" matSliderStartThumb>
-		<input value="50000" matSliderEndThumb>
-	</mat-slider>
 </div>

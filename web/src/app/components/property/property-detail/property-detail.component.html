@@ -1,1 +1,44 @@
-<p>property-detail works!</p>
+<div class="container-fluid property-detail">
+	<div class="property">
+		<div class="container">
+
+			<div class="d-flex justify-content-between">
+				<div>
+					<h3 class="title">
+						{{ (property.name?.length ? property.name : property.type) + " in " + property.location }}
+					</h3>
+				</div>
+				<div class="actions">
+					<button class="btn btn-share">
+						<span class="icon"><i class="fa-solid fa-arrow-up-from-bracket"></i></span>
+						share
+					</button>
+					<button class="btn btn-bookmark">
+						<span class="icon"><i class="fa-regular fa-bookmark"></i></span>
+						save
+					</button>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-7">
+					<div class="iframe">
+						<iframe src="https://wess58.github.io/vr-env-2/" frameborder="0"></iframe>
+					</div>
+					<div class="photos">
+						<div class="image">
+							<img src="" alt="">
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-5">
+
+				</div>
+
+			</div>
+
+
+		</div>
+	</div>
+</div>
