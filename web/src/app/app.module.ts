@@ -16,6 +16,9 @@ import { NgmodelDebounceDirective } from './directives/ngmodel-debounce.directiv
 import { MatSliderModule } from '@angular/material/slider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { SanitizeUrlPipe } from './pipes/sanitize-url.pipe';
+import { AppTooltipDirective } from './directives/app-tooltip.directive';
+import { SearchWidgetComponent } from './components/search-widget/search-widget.component';
 
 
 @NgModule({
@@ -26,7 +29,10 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     NavbarComponent,
     FooterComponent,
     FigureFormatterPipe,
-    NgmodelDebounceDirective
+    NgmodelDebounceDirective,
+    SanitizeUrlPipe,
+    AppTooltipDirective,
+    SearchWidgetComponent
   ],
   imports: [
     BrowserModule,

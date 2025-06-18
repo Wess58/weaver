@@ -1,0 +1,145 @@
+<div>
+	<div class="mini-widget" #miniWidget *ngIf="!showWideWidget" [@fadeInDownMini]>
+		<div class="location" id="openLocation">
+			{{ filters.location?.length ? filters.location : 'Location'}}
+		</div>
+		<div class="price" #priceWrap>
+			{{ filters.supriseRange?.length ? filters.supriseRange : (!filters.priceStart ? 'Price range' :
+			(filters.priceStart | figureFormatter) + ' to ' + (filters.priceEnd | figureFormatter) )}}
+		</div>
+		<div class="rooms" #roomsWrap>
+			{{filters.rooms ? (filters.rooms + (filters.rooms > 1 ? " bedrooms" : " bedroom")) : 'Bedrooms'}}
+		</div>
+	</div>
+
+	<div class="filter-wrap" #miniWidget *ngIf="showWideWidget" [@fadeInDown]>
+		<div class="top-deck" *ngIf="router.url.length < 2">
+			<button class="btn btn-toggle" [ngClass]="{'active-toggle':currentToggle === 'all'}"
+				(click)="selectToggle('all')">All</button>
+			<button class="btn btn-toggle" [ngClass]="{'active-toggle':currentToggle === 'rent'}"
+				(click)="selectToggle('rent')">For Rent</button>
+			<button class="btn btn-toggle" [ngClass]="{'active-toggle':currentToggle === 'buy'}"
+				(click)="selectToggle('buy')">For Sale</button>
+		</div>
+		<div class="bottom-deck" [ngClass]="{'bordered':router.url.length > 2}">
+			<div class="wrap" id="openLocation">
+				<label for="location" id="openLocation">Location</label>
+				<input type="text" class="form-control" name="location" id="openLocationInput" (blur)="trimLocation()"
+					[(ngModel)]="filters.location" (ngModelChange)="searchLocation()" placeholder="Search locations"
+					autocomplete="off">
+
+				<div class="search-res-listing" *ngIf="openLocation && filteredLocations?.length" [@fadeInPopUp]>
+					<div class="search-item" *ngFor="let location of filteredLocations; index as i"
+						(click)="selectLocation(location)">
+						<span class="name">{{ location }} </span>
+					</div>
+				</div>
+			</div>
+			<div class="wrap" #priceWrap>
+				<label for="location">Price range </label>
+				@if (filters.supriseRange?.length) {
+				<span class="d-block place-holder"> {{filters.supriseRange}} </span>
+				} @else if (!filters.priceStart || !filters.priceEnd) {
+				<span class="d-block place-holder">
+					Select range
+					<span class="icon-down"><i class="fa-solid fa-caret-down"></i></span>
+				</span>
+				} @else{
+				<div class="uneditable-text">
+					<span class="figure">
+						{{filters.priceStart | currency: '' + 'KES ':'symbol':'1.0-0'}}
+					</span>
+					<span class="desc">to</span>
+					<span class="figure">
+						{{filters.priceEnd | currency: '' + 'KES ':'symbol':'1.0-0'}}
+					</span>
+				</div>
+				}
+
+
+				<div class="price-card" *ngIf="openPrice" (click)="$event.stopPropagation()" [@fadeInPopUp]>
+					<div class="price-inputs-box">
+						<div class="price-input">
+							<span class="desc">From </span>
+							<input type="text" class="form-control" name="priceStart"
+								(blur)="validateInputLimits('min')" [ngModelOptions]="{standalone:true}"
+								[(ngModel)]="filters.priceStart">
+							<!-- ngModelDebounceChange (ngModelDebounceChange)="checkPriceInputLimits('min')"
+											[timeout]="500" -->
+						</div>
+						<span class="hyphen">—</span>
+						<div class="price-input">
+							<span class="desc">To</span>
+							<input type="text" class="form-control" name="priceEnd" (blur)="validateInputLimits('max')"
+								[ngModelOptions]="{standalone:true}" [(ngModel)]="filters.priceEnd">
+						</div>
+					</div>
+
+					<div class="range-options">
+						<div class="range-item" *ngFor="let range of priceRanges;index as i"
+							[ngClass]="{'active-range':checkIfActiveRange(range)}" (click)="selectPriceRange(range)">
+							{{range[0] | currency: '' + 'KES ':'symbol':'1.0-0'}}
+							<span class="d-inline-block mx-2">to</span>
+							{{range[1] | currency: '' + 'KES ':'symbol':'1.0-0'}}
+						</div>
+						<div class="range-item" [ngClass]="{'active-range':filters.supriseRange?.length}"
+							(click)="selectPriceRange()">No budget, no limits!</div>
+					</div>
+
+					<!-- <mat-slider min="10000" max="1000000" step="" showTickMarks
+									(change)="updatePrice($event)" id="openPriceInput">
+									<input [(ngModel)]="filters.priceStart" matSliderStartThumb id="openPriceInput" value="10000">
+									<input [(ngModel)]="filters.priceEnd" matSliderEndThumb id="openPriceInput" value="100000">
+								</mat-slider> -->
+				</div>
+			</div>
+
+
+			<div class="wrap border-0" #roomsWrap>
+				<label for="location">Number of bedrooms</label>
+
+				@if (!filters.rooms) {
+				<span class="d-block place-holder">Select rooms <span class="icon-down"><i
+							class="fa-solid fa-caret-down"></i></span></span>
+				}@else{
+				<div class="uneditable-text">
+					<span class="figure">
+						{{filters.rooms + (filters.rooms > 1 ? " bedrooms" : " bedroom")}}
+					</span>
+				</div>
+				}
+
+				<div class="room-card" *ngIf="openRooms" (click)="$event.stopPropagation()" [@fadeInPopUp]>
+
+					<div class="plus-minus-inputs">
+						<div>
+							<span class="title">Bedrooms</span>
+						</div>
+						<div class="controls">
+							<button class="btn btn-minus" (click)="changeRoomsValues('minus')"
+								[disabled]="filters.rooms < 1">
+								<i class="fa-solid fa-minus"></i>
+							</button>
+							<span class="figure"> {{filters.rooms ?? 0 }} </span>
+							<button class="btn btn-plus" (click)="changeRoomsValues('plus')"
+								[disabled]="filters.rooms > 9 ">
+								<i class="fa-solid fa-plus"></i>
+							</button>
+						</div>
+					</div>
+
+					<mat-slide-toggle [(ngModel)]="filters.showOnlyAvailable" labelPosition="before">
+						Show only available properties
+					</mat-slide-toggle>
+				</div>
+			</div>
+			<div class="btn-wrap">
+				<button class="btn btn-search">
+					<span class="icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+					<span>Search</span>
+					<!-- *ngIf="checkIfFilterExists()" -->
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

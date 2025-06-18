@@ -2,14 +2,18 @@
 	<div class="property">
 		<div class="container">
 
-			<div class="d-flex justify-content-between">
+			<div class="d-flex justify-content-between mb-2">
 				<div>
-					<h3 class="title">
-						{{ (property.name?.length ? property.name : property.type) + " in " + property.location }}
-					</h3>
+					<div class="breadcrumb">
+						<div class="item" *ngFor="let breadcrumb of property?.breadcrumbs;index as i;last as last">
+							<a> {{breadcrumb}} </a>
+							<span [hidden]="last" class="icon"><i class="fa-solid fa-angle-right"></i></span>
+						</div>
+					</div>
 				</div>
 				<div class="actions">
-					<button class="btn btn-share">
+					<button class="btn btn-share" [appTooltip]="!isCopied ? 'Copy link' : 'Copied !'"
+						(click)="copyLink()" (mouseleave)="isCopied = false">
 						<span class="icon"><i class="fa-solid fa-arrow-up-from-bracket"></i></span>
 						share
 					</button>
@@ -21,24 +25,118 @@
 			</div>
 
 			<div class="row">
-				<div class="col-md-7">
-					<div class="iframe">
-						<iframe src="https://wess58.github.io/vr-env-2/" frameborder="0"></iframe>
+				<div class="col-md-12 col-lg-7">
+					<div class="iframe position-relative">
+						<iframe loading="eager" allow-popups allow-same-origin (mouseenter)="hoverIframe = true"
+							(mouseleave)="hoverIframe = false"
+							title="(property.name?.length ? property.name : property.type) + ' in ' + property.location + ' VR tour'"
+							[src]="property.iframeUrl | sanitizeUrl" frameborder="0"></iframe>
+
+						<a class="fullscreen" [href]="property.iframeUrl" target="_blank"
+							appTooltip="Open fullscreen window">
+							<i class="fa-solid fa-up-right-and-down-left-from-center"
+								[ngClass]="{'fa-beat':hoverIframe}"></i>
+						</a>
 					</div>
-					<div class="photos">
-						<div class="image">
-							<img src="" alt="">
+
+					<div class="property-photos">
+						<div class="image" *ngFor="let image of property.imageUrl;index as i"
+							(click)="currentImageIndex = i" data-bs-toggle="modal" data-bs-target="#imagesModal">
+							<img [src]="image" alt="property image">
 						</div>
 					</div>
 				</div>
 
-				<div class="col-md-5">
+				<div class="col-md-12 col-lg-5">
+					<div class="property-content">
+						<small class="not-available">* Currently unavailable</small>
+						<h4 class="title">
+							{{ (property.name?.length ? property.name : property.type) + " in " + property.location }}
+						</h4>
+						<div class="d-inline">
+							<span class="price">
+								{{ 'KES ' + (property.price | figureFormatter)}}
+								<span class="fw-normal" *ngIf="property.isRental">&nbsp;/ month</span></span>
+							<span class="rooms ms-3"> {{property.rooms + " BR"}} </span>
+						</div>
+						<p class="description"> {{property.description}} </p>
+
+
+						<div class="amenities">
+							<span class="sub-section-title">Amenities</span>
+
+							<span class="amenity-item" *ngFor="let amenity of property.amenities"> {{amenity}} </span>
+						</div>
+
+					</div>
 
 				</div>
-
 			</div>
 
 
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="imagesModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-xl modal-dialog-centered">
+		<div class="modal-content">
+			<!-- <div class="modal-header bor">
+				<h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div> -->
+			<div class="modal-body">
+				<div id="carouselExampleControls" class="carousel slide carousel-fade" data-ride="carousel"
+					data-bs-touch="true">
+					<div class="carousel-inner">
+						<div class="carousel-item" [ngClass]="{'active':currentImageIndex === i}"
+							*ngFor="let imgUrl of property.imageUrl;index as i; first as isFirst" data-interval="4000">
+							<img [src]="imgUrl" class="d-block w-100" alt="photo">
+						</div>
+					</div>
+
+					<div class="d-none d-md-block">
+						<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+							data-bs-slide="prev">
+							<span class="navigation-icon"> <i class="fa-solid fa-circle-chevron-left"></i>
+							</span>
+						</button>
+						<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+							data-bs-slide="next">
+							<span class="navigation-icon"> <i class="fa-solid fa-circle-chevron-right"></i>
+							</span>
+						</button>
+					</div>
+
+					<div class="d-block d-md-none">
+						<div class="carousel-ms-buttons">
+
+							<button class="btn carousel-prev" type="button" data-bs-target="#carouselExampleControls"
+								data-bs-slide="prev">
+								Previous
+							</button>
+							<button class="btn carousel-next" type="button" data-bs-target="#carouselExampleControls"
+								data-bs-slide="next">
+								Next
+							</button>
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<!-- <div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary">Save changes</button>
+			</div> -->
 		</div>
 	</div>
 </div>
