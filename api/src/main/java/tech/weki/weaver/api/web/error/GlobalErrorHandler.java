@@ -22,8 +22,8 @@ public class GlobalErrorHandler {
     @ExceptionHandler(RequestValidationException.class)
     public ResponseEntity<ErrorResponse> handleRequestValidationException(RequestValidationException ex) {
         log.error("Encountered exception", ex);
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
