@@ -5,7 +5,9 @@
 			<div class="d-flex justify-content-between mb-2">
 				<div>
 					<div class="breadcrumb">
-						<div class="item" *ngFor="let breadcrumb of property?.breadcrumbs;index as i;last as last">
+						<div class="item"
+							[appTooltip]="!first ? 'View properties in ' + breadcrumb : 'Browse all properties'"
+							*ngFor="let breadcrumb of property?.breadcrumbs;index as i;last as last;first as first">
 							<a> {{breadcrumb}} </a>
 							<span [hidden]="last" class="icon"><i class="fa-solid fa-angle-right"></i></span>
 						</div>
@@ -25,29 +27,25 @@
 			</div>
 
 			<div class="row">
-				<div class="col-md-12 col-lg-7">
-					<div class="iframe position-relative">
-						<iframe loading="eager" allow-popups allow-same-origin (mouseenter)="hoverIframe = true"
-							(mouseleave)="hoverIframe = false"
-							title="(property.name?.length ? property.name : property.type) + ' in ' + property.location + ' VR tour'"
-							[src]="property.iframeUrl | sanitizeUrl" frameborder="0"></iframe>
-
-						<a class="fullscreen" [href]="property.iframeUrl" target="_blank"
-							appTooltip="Open fullscreen window">
-							<i class="fa-solid fa-up-right-and-down-left-from-center"
-								[ngClass]="{'fa-beat':hoverIframe}"></i>
-						</a>
-					</div>
-
-					<div class="property-photos">
-						<div class="image" *ngFor="let image of property.imageUrl;index as i"
-							(click)="currentImageIndex = i" data-bs-toggle="modal" data-bs-target="#imagesModal">
-							<img [src]="image" alt="property image">
+				<div class="col-md-12 col-lg-12 col-xl-8">
+					<div class="d-flex">
+						<div class="property-photos hidden d-md-block">
+							<div class="image" appTooltip="View in full" [tooltipDelay]="1000"
+								[tooltipPosition]="'left'" *ngFor="let image of property.imageUrl;index as i"
+								(click)="currentImageIndex = i" data-bs-toggle="modal" data-bs-target="#imagesModal">
+								<img [src]="image" alt="property image">
+							</div>
 						</div>
+
+						<ng-container>
+							<app-vr-iframe class="w-100" [iframeLink]="property.iframeUrl"></app-vr-iframe>
+						</ng-container>
 					</div>
+
+
 				</div>
 
-				<div class="col-md-12 col-lg-5">
+				<div class="col-md-12 col-lg-12 col-xl-4">
 					<div class="property-content">
 						<small class="not-available">* Currently unavailable</small>
 						<h4 class="title">
@@ -62,10 +60,43 @@
 						<p class="description"> {{property.description}} </p>
 
 
-						<div class="amenities">
+						<div class="amenities" >
 							<span class="sub-section-title">Amenities</span>
 
-							<span class="amenity-item" *ngFor="let amenity of property.amenities"> {{amenity}} </span>
+							<div class="row">
+								<div class="col-6 col-lg-4 col-xl-6" *ngFor="let amenity of property.amenities.slice(0, (showMore ? property.amenities?.length : 8))">
+									<span class="amenity-item">
+										<span class="icon"><i [class]="amenity.icon"></i></span>
+										<span> {{amenity.amenity}} </span>
+									</span>
+								</div>
+							</div>
+
+							<span class="more-toggle d-block text-end" (click)="showMore = ! showMore">Show {{showMore ? 'less' : 'more'}} </span>
+						</div>
+
+						<div class="contact-request">
+
+							<span class="form-desc">
+
+								<span class="sub-section-title">Leave your contact</span>
+								<span class="desc">
+									Your details help us keep you informed.
+									We’ll only reach out so we can send you relevant updates, alerts or answers to your
+									inquiry.
+									<br class="d-block d-lg-none d-xl-block">
+									No spam, just the info you care about.
+								</span>
+
+							</span>
+
+							<button class="btn btn-inquire" data-bs-toggle="modal" data-bs-target="#userActionModal">
+								{{property.availability ? 'I’m Interested' : 'Alert Me When Available' }}
+							</button>
+
+
+
+
 						</div>
 
 					</div>
@@ -74,8 +105,16 @@
 			</div>
 
 
+			<div class="map-content">
+				<h4 class="map-title">Property location</h4>
+				<span class="map-desc">The current property marked in <strong class="orange-text">orange</strong>.
+					Explore more properties directly on
+					the map, tap property to see more details.</span>
 
-
+				<div class="map-container" *ngIf="showMap">
+					<app-map-widget></app-map-widget>
+				</div>
+			</div>
 
 
 
@@ -137,6 +176,71 @@
 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 				<button type="button" class="btn btn-primary">Save changes</button>
 			</div> -->
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+<div class="modal fade" id="userActionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal- modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title"> Contact details </h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+					id="closeUserActionModal"></button>
+			</div>
+			<div class="modal-body p-4">
+				<!-- 	
+					<div class="alert alert-danger" *ngIf="userActionFail" [@fadeIn]>
+						<strong>Failed to {{action | lowercase}} user! </strong> {{errorMessage}}.
+					</div> -->
+
+				<!-- <small class="request-desc">
+					We’ll only reach out so we can send you relevant updates, alerts or answers to your
+					inquiry.
+				</small> -->
+
+				<div class="row">
+					<div class="form-group">
+						<label for="">Name</label>
+						<input type="text" class="form-control" name="name" [(ngModel)]="user.name"
+							placeholder="eg : John Doe" autocomplete="off">
+					</div>
+
+					<div class="form-group">
+						<label for="">Mobile number</label>
+						<!-- <small class="label-desc">Required for login via OTP</small> -->
+						<input type="text" class="form-control" placeholder="eg : 254703******" name="msisdn"
+							[(ngModel)]="user.msisdn" pattern="[0-9]*" inputmode="numeric"
+							oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/^0/,254).replace(/^7/,2547).replace(/(\..*)\./g, '$1');" />
+					</div>
+
+					<div class="form-group">
+						<label for="">Email address
+							<small class="red-text fw-normal fst-italic ms-2" *ngIf="emailInvalid" [@fadeIn]>Email is
+								invalid</small>
+						</label>
+						<div class="position-relative">
+							<input type="text" class="form-control" name="email" [(ngModel)]="user.email"
+								(ngModelChange)="emailInvalid = false" (ngModelDebounceChange)="validateEmail()"
+								[ngModelOptions]="{standalone: true}" placeholder="eg : johndoe@gmail.com"
+								autocomplete="off">
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
+
+				<button type="button" class="btn btn-submit" (click)="submitForm()" [disabled]="submitting">{{submitting
+					? 'Submitting ...' : 'Submit' }}</button>
+			</div>
 		</div>
 	</div>
 </div>

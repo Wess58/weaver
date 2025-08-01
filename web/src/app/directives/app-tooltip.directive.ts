@@ -22,8 +22,7 @@ export class AppTooltipDirective implements OnChanges,OnDestroy {
   @Input() tooltipPosition: 'top' | 'bottom' | 'left' | 'right' = 'top';
   @Input() tooltipDelay: number = 0; // ms
   @Input() tooltipTrigger: 'hover' | 'click' = 'hover'; //  trigger type
-
-
+  
   private tooltipEl?: HTMLElement;
   private delayTimeout?: ReturnType<typeof setTimeout>;
   private isTooltipVisible = false;
@@ -114,8 +113,8 @@ export class AppTooltipDirective implements OnChanges,OnDestroy {
       }
 
       // Prevent overflow
-      top = Math.max(4, Math.min(top, window.innerHeight - tooltipRect.height - 4));
-      left = Math.max(4, Math.min(left, window.innerWidth - tooltipRect.width - 4));
+      top = Math.max(4, Math.min(top, window.innerHeight - tooltipRect.height - 30));
+      left = Math.max(4, Math.min(left, window.innerWidth - tooltipRect.width - 30));
 
       this.renderer.setStyle(this.tooltipEl, 'top', `${top}px`);
       this.renderer.setStyle(this.tooltipEl, 'left', `${left}px`);

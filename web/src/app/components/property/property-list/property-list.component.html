@@ -1,63 +1,60 @@
-<div class="container-fluid">
+<div class="container-fluid" [@fadeIn]>
 
 	<!-- LANDING SECTION  -->
-	<main class="landing-section">
+	<!-- <main class="landing-section">
 		<div class="container">
 			<div class="content">
 				<span class="desc">Step inside your next Home</span>
-				<h1>See It. Feel It. Live It.</h1>
-				<!-- <p>
-					Explore properties built around your life, not just your budget with our virtual walkthroughs that
-					bring spaces to life.
-				</p> -->
+				<h1 #animatedText class="animated-text"> {{ heroText }}</h1>
 			</div>
 
-			<app-search-widget></app-search-widget>
+
 		</div>
+	</main> -->
+
+
+	<main class="landing-section" id="container">
+
+		<app-video-scroll></app-video-scroll>
 	</main>
 
-	<div class="property-listing">
 
-		<h4 class="listing-title">Featured homes </h4>
-		<a class="view-all">View all <span class="ms-2"><i class="fa-solid fa-arrow-right"></i></span></a>
+	<ng-container *ngIf="virtualEnvProperties?.length">
+		<div class="vr-property-listing">
 
-		<div class="grid-box">
+			<h4 class="listing-title ms-md-2 mb-3">Featured virtual tours </h4>
+			<!-- <a class="view-all">View all <span class="ms-2"><i class="fa-solid fa-arrow-right"></i></span></a> -->
+
+
+			<div class="row mx-0">
+				<a class="property-item col-md-6 col-lg-4 ps-md-2 mb-4 mb-md-0"
+					*ngFor="let property of virtualEnvProperties;index as i"
+					[routerLink]="['/property',(property.id ?? 1),slugify((property.name?.length ? property.name : property.type) + ' in ' + property.location)]">
+
+					<app-vr-iframe [iframeLink]="property.iframeUrl" [height]="400"></app-vr-iframe>
+
+					<div class="content py-2">
+						<h4 class="title">{{property.title}}</h4>
+						<span class="price">{{ 'KES ' + (property.price | figureFormatter)}}
+							<span class="fw-normal">&nbsp;/month</span>
+							<!-- *ngIf="property.isRental" -->
+						</span>
+					</div>
+				</a>
+			</div>
+		</div>
+	</ng-container>
+
+	<div class="property-listing" *ngFor="let list of [1]">
+
+		<h4 class="listing-title ms-md-2">Featured homes in Kiambu </h4>
+		<a class="view-all ms-md-2">View all <span class="ms-2"><i class="fa-solid fa-arrow-right"></i></span></a>
+
+		<div class="grid-box ">
 			@for (property of properties; track $index) {
-			<div class="grid-item">
+			<div class="grid-item" *ngIf="properties.length">
 				<!-- *ngFor="let property of properties;index as i" -->
-				<div class="card property-item">
-
-					<div class="property-bookmark">
-						<div class="position-relative">
-							<span class="icon"><i class="fa-regular fa-bookmark"></i></span>
-							<img src="assets/images/curvy-edge.svg" alt="icon-bg">
-						</div>
-					</div>
-
-					<div class="image-holder">
-						<img [src]="property.imageUrl" alt="photo">
-					</div>
-
-					<a class="property-content-wrapper"
-						[routerLink]="['/property',(property.id ?? 1),slugify((property.name?.length ? property.name : property.type) + ' in ' + property.location)]">
-						<div class="property-content">
-							<h5 class="property-title">
-								{{ (property.name?.length ? property.name : property.type) + " in " + property.location
-								}}
-							</h5>
-							<div class="d-flex justify-content-between align-items-center">
-								<span class="property-price">
-									<!-- {{ property.price | currency: '' + 'KES ':'symbol':'1.0-0'}} -->
-									{{ 'KES ' + (property.price | figureFormatter)}}
-									<span class="fw-normal" *ngIf="property.isRental">&nbsp;/month</span>
-								</span>
-								<span class="property-rooms" [title]="property.rooms + ' Bedroom ' + property.type">
-									{{property.rooms + " BR"}} </span>
-							</div>
-						</div>
-					</a>
-
-				</div>
+				<app-property-card [property]="property"></app-property-card>
 			</div>
 			}
 		</div>

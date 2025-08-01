@@ -15,6 +15,16 @@ import { Router, ActivatedRoute, ActivationEnd } from '@angular/router';
         animate(400, style({ opacity: 1 })),
       ]),
     ]),
+    trigger('expandCollapse', [
+      transition(':enter', [
+        style({ height: '0px', opacity: 0, overflow: 'hidden' }),
+        animate('300ms ease', style({ height: '*', opacity: 1 })),
+      ]),
+      transition(':leave', [
+        style({ height: '*', opacity: 1, overflow: 'hidden' }),
+        animate('200ms ease', style({ height: '0px', opacity: 0 })),
+      ]),
+    ]),
   ],
 })
 export class NavbarComponent {
@@ -26,7 +36,7 @@ export class NavbarComponent {
     // console.log($event);
     // console.log("scrolling", window.pageYOffset);
 
-    this.morphNavbar = (window.innerWidth > 770 && ((window.pageYOffset / window.innerHeight * 100) > 50)) || (window.innerWidth < 770 && ((window.pageYOffset / window.innerHeight * 100) > 60));
+    this.morphNavbar = (window.innerWidth > 770 && ((window.pageYOffset / window.innerHeight * 100) > 10)) || (window.innerWidth < 770 && ((window.pageYOffset / window.innerHeight * 100) > 60));
   }
 
   constructor(
@@ -43,5 +53,13 @@ export class NavbarComponent {
 
   handleState(value: boolean) {
     this.heightState = value;
+  }
+
+  browseProperties(type: string): void {
+    this.router.navigate(['/browse'], {
+      queryParams: {
+        type
+      }
+    })
   }
 }

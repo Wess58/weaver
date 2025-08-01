@@ -1,9 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 @use "@angular/material" as mat;
 @import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
-@import "./assets/css/font-montserrat.css";
+// @import "./assets/css/font-montserrat.css";
+@import "./assets/css/font-nunito.css";
 @import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
-@import url("https://fonts.googleapis.com/css2?family=Fascinate&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap')");
+@import url("https://fonts.googleapis.com/css2?family=Fascinate&display=swap')");
 
 :root {
   --app-orange: #f08121;
@@ -20,7 +21,7 @@ body {
   @include mat.theme(
     (
       color: mat.$orange-palette,
-      typography: Montserrat,
+      typography: Nunito,
       density: -2,
     )
   );
@@ -32,7 +33,7 @@ html {
 
 body {
   margin: 0;
-  overflow-x: hidden !important;
+  // overflow-x: hidden !important;
 
   // font-family: "Montserrat", sans-serif;
   font-family: "Nunito", sans-serif;
@@ -108,8 +109,6 @@ img::selection {
   /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: #5f6063 !important;
   letter-spacing: 1px !important;
-  // opacity: 1;
-  // font-family: 'Montserrat', sans-serif !important;
   /* Firefox */
 }
 
@@ -133,6 +132,229 @@ img::selection {
   cursor: pointer !important;
 }
 
+.icon-home-marker {
+  background-color: #fff;
+  border-radius: 50%;
+}
+
+.orange-text {
+  color: #f08121 !important;
+}
+
+// **************************************
+// MAP STYLING
+// ***************************************
+
+.map-container {
+  border-radius: 20px;
+  overflow: hidden;
+  width: 100%;
+  border: 2px solid #e1e1e1;
+}
+
+.transition {
+  transition: all 0.3s ease-in-out;
+}
+// *************************************
+// PROPERTY / VR-PROPERTY LISTING
+// *************************************
+
+.grid-box {
+  display: grid;
+  // grid-template-columns: repeat(3, auto);
+  gap: 0 15px;
+  justify-content: space-evenly;
+
+  .grid-item {
+    place-self: center;
+  }
+}
+
+.property-listing,
+.vr-property-listing {
+  padding: 4vh 20px 0;
+
+  .listing-title {
+    font-weight: 600;
+    // font-family: "Montserrat", sans-serif;
+    margin-bottom: 5px;
+  }
+
+  .view-all {
+    color: #5f6063;
+    font-weight: 600;
+    font-size: 1rem;
+    display: block;
+    margin-bottom: 10px;
+
+    i {
+      font-size: 0.8rem;
+    }
+  }
+
+  .property-item {
+    position: relative;
+    top: 0;
+    // border: 2px solid #fff;
+    border: none;
+    border-radius: 14px;
+    margin-bottom: 40px;
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
+
+    &:hover {
+      top: -10px;
+      transition: all 0.2s ease-in-out;
+
+      .image-holder {
+        img {
+          // border: 2px solid var(--app-orange);
+        }
+      }
+    }
+
+    .property-bookmark {
+      position: absolute;
+      right: 0;
+      top: 0;
+      cursor: pointer;
+
+      .icon {
+        position: absolute;
+        top: 7px;
+        right: 14px;
+        font-size: 1.3rem;
+        z-index: 10;
+        color: #3c4043;
+      }
+
+      img {
+        position: absolute;
+        width: 50px;
+        top: 2px;
+        right: 2px;
+        color: #fff;
+        transform: rotate(270deg);
+        z-index: 5;
+        border-radius: 0 0 17px 0;
+      }
+    }
+
+    .image-holder {
+      width: 100%;
+      height: 370px;
+
+      img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+
+        border-radius: 20px;
+        overflow: hidden;
+        border: 3px solid #fff;
+
+        transition: all 0.3s;
+      }
+    }
+
+    .property-content-wrapper {
+      position: absolute;
+      bottom: 0;
+      display: flex;
+      align-items: end;
+      height: 100%;
+      width: 100%;
+      background-image: linear-gradient(
+        5deg,
+        #212121 20%,
+        #fff1 35%,
+        transparent 40%
+      );
+      mask: linear-gradient(to bottom, transparent, #000 90%);
+      //   mask: linear-gradient(black, black, transparent);
+      backdrop-filter: blur(1px);
+      transition: all 0.2s;
+
+      .property-content {
+        padding: 10px 15px 15px 15px;
+        width: 100%;
+        color: #fff;
+
+        .property-title {
+          font-size: 0.9rem;
+          font-weight: 600;
+        }
+
+        .property-price,
+        .property-rooms {
+          padding: 3px 12px;
+          border-radius: 12px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          display: inline-flex;
+          justify-content: center;
+          align-items: center;
+          line-height: 1rem;
+        }
+
+        .property-price {
+          background-color: #fff;
+          color: #212121;
+          backdrop-filter: blur(1px);
+        }
+
+        .property-rooms {
+          background-color: #fff5;
+        }
+      }
+    }
+  }
+}
+
+// *************************************
+// MODAL STYLING
+// *************************************
+
+.modal {
+  backdrop-filter: blur(2px);
+
+  .request-desc {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    color: #80868b;
+    text-align: justify;
+  }
+}
+
+.modal-footer {
+  border: none;
+  // padding: 0 28px 32px;
+
+  .btn {
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 5px 15px;
+    letter-spacing: 0.7px;
+  }
+
+  .btn-cancel {
+    background-color: #f1f1f1;
+    color: #5f6063;
+    margin-right: 20px;
+  }
+
+  .btn-submit {
+    background-color: #f08121;
+    color: #fff;
+  }
+
+  .btn-delete {
+    background-color: #d11a2a;
+    color: #fff;
+  }
+}
+
 /* MEDIA QUERIES FOR RESPONSIVENESS */
 
 @media (max-width: 3000px) {
@@ -153,5 +375,14 @@ img::selection {
 @media (max-width: 1370px) {
 }
 
+@media (max-width: 1100px) {
+}
+
 @media (max-width: 770px) {
+  body {
+    // zoom: 85%;
+  }
+}
+
+@media (max-width: 600px) {
 }

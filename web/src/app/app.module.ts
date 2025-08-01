@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -19,6 +20,12 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { SanitizeUrlPipe } from './pipes/sanitize-url.pipe';
 import { AppTooltipDirective } from './directives/app-tooltip.directive';
 import { SearchWidgetComponent } from './components/search-widget/search-widget.component';
+import { VrIframeComponent } from './components/shared/vr-iframe/vr-iframe.component';
+import { BrowseComponent } from './components/property/browse/browse.component';
+import { PropertyCardComponent } from './components/shared/property-card/property-card.component';
+import { MapWidgetComponent } from './components/map-widget/map-widget.component';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { VideoScrollComponent } from './components/video-scroll/video-scroll.component';
 
 
 @NgModule({
@@ -32,7 +39,12 @@ import { SearchWidgetComponent } from './components/search-widget/search-widget.
     NgmodelDebounceDirective,
     SanitizeUrlPipe,
     AppTooltipDirective,
-    SearchWidgetComponent
+    SearchWidgetComponent,
+    VrIframeComponent,
+    BrowseComponent,
+    PropertyCardComponent,
+    MapWidgetComponent,
+    VideoScrollComponent
   ],
   imports: [
     BrowserModule,
@@ -41,10 +53,12 @@ import { SearchWidgetComponent } from './components/search-widget/search-widget.
     BrowserAnimationsModule,
     MatSliderModule,
     MatSlideToggleModule,
-    MatButtonModule
+    MatButtonModule,
+    NgxPaginationModule
   ],
   providers: [
     // provideAnimations()
+    provideHttpClient(withInterceptorsFromDi())
   ],
   bootstrap: [AppComponent]
 })

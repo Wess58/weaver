@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { DomSanitizer } from "@angular/platform-browser";
+import { ApiService } from '../../../services/api.service';
+import { AMENITY_ICONS } from '../../../app.constants';
+import { GptService } from '../../../services/gpt-service.service';
 
 @Component({
   selector: 'app-property-detail',
@@ -9,9 +12,13 @@ import { DomSanitizer } from "@angular/platform-browser";
 })
 export class PropertyDetailComponent implements OnInit {
 
-  hoverIframe = false;
-  isCopied = false;
-  currentImageIndex = 0;
+  isCopied: boolean = false;
+  currentImageIndex: number = 0;
+  emailInvalid: boolean = false;
+  user: any = {};
+  submitting: boolean = false;
+  showMap: boolean = false;
+  showMore: boolean = false;
 
   property: any = {
     name: '',
@@ -26,17 +33,14 @@ export class PropertyDetailComponent implements OnInit {
     rooms: 1,
     iframeUrl: 'https://wess58.github.io/vr-env-2/',
     imageUrl: ['../../../../assets/images/img3.webp'],
-    amenities: [
-      'Garden view', 'Private entrance', 'Private backyard', 'Free parking on premises', 'Hot water', 'Wifi', 'induction stove', 'Washer – In unit', 'Heating and cooling', 'Smoke alarm', 'Fire extinguisher', 'Carbon monoxide alarm', 'First aid kit', 'Security cameras on property'
-    ]
+    amenities: AMENITY_ICONS
   };
 
-
   constructor(
-    public sanitizer: DomSanitizer
-  ) {
-
-  }
+    public sanitizer: DomSanitizer,
+    private apiService: ApiService,
+    private gptService: GptService
+  ) { }
 
 
   ngOnInit(): void {
@@ -46,10 +50,43 @@ export class PropertyDetailComponent implements OnInit {
     this.property.imageUrl = Array(5).fill(this.property.imageUrl);
     this.property.breadcrumbs = ['All', (this.property.county), this.property.district, this.property.location];
 
+    if (!localStorage.getItem('fetched')) {
+      // this.onPropertyClick(this.property.county);
+    }
+
+    this.showMap = false;
+    setTimeout(() => this.showMap = true);
   }
+
+
 
   copyLink(): void {
     navigator.clipboard.writeText(window.location as any);
     this.isCopied = true;
   }
+
+
+  validateEmail(): void {
+    // console.log(!(/\S+@\S+\.\S+/).test(this.user.email.trim()));
+    this.emailInvalid = this.user.email && !(/\S+@\S+\.\S+/).test(this.user.email);
+  }
+
+  onPropertyClick(location: string) {
+    this.gptService.getAreaSummary(location).subscribe(
+      {
+        next: (res) => {
+          console.log(res);
+          const reply = res.choices?.[0]?.message?.content;
+          this.property.extraInfo = reply;
+          localStorage.setItem('fetched', 'true');
+        }
+      });
+  }
+
+
+  submitForm(): void {
+    this.submitting = true;
+  }
 }
+
+

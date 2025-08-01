@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, ElementRef, Output, EventEmitter, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { style, animate, transition, trigger } from '@angular/animations';
 import { ActivatedRoute, Router, ActivationEnd } from '@angular/router';
 
@@ -25,36 +25,36 @@ import { ActivatedRoute, Router, ActivationEnd } from '@angular/router';
     trigger('fadeInDownMini', [
       transition(':enter', [
         // :enter is alias to 'void => *'
-        style({ opacity: 0, transform: 'scale(1.5)' }),
-        animate("250ms ease-in-out", style({ opacity: 1, transform: 'scale(1)' })),
+        style({ opacity: 0, marginTop: -50 }),
+        animate("300ms ease-in-out", style({ opacity: 1, marginTop: 0 })),
       ]),
       transition(':leave', [
         // :enter is alias to 'void => *'
-        style({ opacity: 1, marginTop: 0, transform: 'scale(1)' }),
-        animate("200ms", style({ opacity: 0, marginTop: -50, transform: 'scale(0.75)' })),
+        style({ opacity: 1, marginTop: 0 }),
+        animate("100ms ease-in-out", style({ opacity: 0, marginTop: -100 })),
       ]),
     ]),
     trigger('fadeInDown', [
       transition(':enter', [
         // :enter is alias to 'void => *'
-        style({ opacity: 0, marginTop: -50, transform: 'scale(0.75)' }),
-        animate("300ms ease-in-out", style({ opacity: 1, marginTop: 0, transform: 'scale(1)' })),
+        style({ opacity: 0, marginTop: -100 }),
+        animate("300ms ease-in-out", style({ opacity: 1, marginTop: 0 })),
       ]),
       transition(':leave', [
         // :enter is alias to 'void => *'
-        style({ opacity: 1, marginTop: 0, transform: 'scale(1)' }),
-        animate("100ms", style({ opacity: 0, marginTop: -50, transform: 'scale(0.75)' })),
+        style({ opacity: 1, marginTop: 0 }),
+        animate("200ms ease-in-out", style({ opacity: 0, marginTop: -100 })),
       ]),
     ]),
   ],
 })
-export class SearchWidgetComponent implements OnInit {
+export class SearchWidgetComponent implements OnInit, OnChanges {
 
 
   currentToggle: string = 'all';
   showWideWidget = false;
   filters: object | any = {
-    rooms: 0
+    rooms: 1
     // priceStart: 10000,
     // priceEnd: 100000
   };
@@ -72,7 +72,7 @@ export class SearchWidgetComponent implements OnInit {
   kenyanCounties = ["Mombasa", "Kwale", "Kilifi", "Tana River", "Lamu", "Taita-Taveta", "Garissa", "Wajir", "Mandera", "Marsabit", "Isiolo", "Meru", "Tharaka-Nithi", "Embu", "Kitui", "Machakos", "Makueni", "Nyandarua", "Nyeri", "Kirinyaga", "Murang'a", "Kiambu", "Turkana", "West Pokot", "Samburu", "Trans Nzoia", "Uasin Gishu", "Elgeyo-Marakwet", "Nandi", "Baringo", "Laikipia", "Nakuru", "Narok", "Kajiado", "Kericho", "Bomet", "Kakamega", "Vihiga", "Bungoma", "Busia", "Siaya", "Kisumu", "Homa Bay", "Migori", "Kisii", "Nyamira", "Nairobi"];
 
   @Output() widgetHeight = new EventEmitter<boolean>();
-
+  @Input() morphNavbar: boolean = false;
 
   @ViewChild('miniWidget') miniWidgetRef!: ElementRef;
   @ViewChild('locationWrap') locationWrapRef!: ElementRef;
@@ -89,7 +89,8 @@ export class SearchWidgetComponent implements OnInit {
     // this.openLocation = this.locationWrapRef?.nativeElement.contains(event.target);
     this.openPrice = this.priceWrapRef?.nativeElement.contains(event.target);
     this.openRooms = this.roomsWrapRef?.nativeElement.contains(event.target);
-    this.showWideWidget = this.router.url?.length < 2 || (this.router.url?.length > 2 && this.miniWidgetRef?.nativeElement.contains(event.target));
+    this.showWideWidget = this.miniWidgetRef?.nativeElement.contains(event.target);
+    // this.router.url?.length < 2 || (this.router.url?.length > 2 && this.miniWidgetRef?.nativeElement.contains(event.target));
     this.widgetHeight.emit(this.showWideWidget);
     // console.log(this.openLocation, this.openPrice, this.openRooms, this.showWideWidget);
 
@@ -113,13 +114,21 @@ export class SearchWidgetComponent implements OnInit {
 
   constructor(
     public router: Router,
+    private activatedRoute: ActivatedRoute,
   ) {
     router.events.subscribe((val) => {
       if (val instanceof ActivationEnd) {
-        this.showWideWidget = this.router.url?.length < 2;
-        // this.widgetHeight.emit(false);
-        // console.log(val);
-        // this.showWideWidget = false;
+        this.showWideWidget = false;
+        this.widgetHeight.emit(false);
+
+        if (this.router.url.includes('browse') && this.activatedRoute.snapshot.queryParams['spr']) {
+          this.filters.spr = this.activatedRoute.snapshot.queryParams['spr'] === 'true';
+          this.filters.supriseRange = this.filters.spr ? 'No budget, no limits!' : null;
+          this.filters.priceStart = this.filters?.spr ? 1 : (+this.activatedRoute.snapshot.queryParams['priceStart'] || 1);
+          this.filters.priceEnd = this.filters?.spr ? 1000000000 : (+this.activatedRoute.snapshot.queryParams['priceEnd'] || 1000000000);
+          this.filters.location = this.activatedRoute.snapshot.queryParams['location'] ?? '';
+          this.filters.rooms = +this.activatedRoute.snapshot.queryParams['rooms'];
+        }
       }
     });
   }
@@ -128,6 +137,11 @@ export class SearchWidgetComponent implements OnInit {
     this.searchLocation();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    // if (changes['morphNavbar']) {
+    //   this.morphNavbar = this.morphNavbar;
+    // }
+  }
 
   selectToggle(tab: string): void {
     this.currentToggle = tab;
@@ -151,6 +165,11 @@ export class SearchWidgetComponent implements OnInit {
 
   selectLocation(item: any): void {
     this.filters.location = item;
+
+    setTimeout(() => {
+      this.openPrice = !this.filters.priceStart && !this.filters.supriseRange;
+      this.openRooms = !this.openPrice && this.filters.rooms === 0;
+    }, 100);
     // this.selectedDevice = Object.assign({}, item);
   }
 
@@ -170,10 +189,16 @@ export class SearchWidgetComponent implements OnInit {
   }
 
   checkIfFilterExists(): boolean {
-    return this.filters.location || this.filters.priceStart || this.filters.priceEnd || this.filters.rooms;
+    return this.filters.location?.length || this.filters.priceStart || this.filters.priceEnd || this.filters?.supriseRange?.length || this.filters.rooms > 1;
+  }
+
+  showRoomValue(): boolean {
+    return this.filters.location?.length || this.filters.priceStart || this.filters.priceEnd || this.filters?.supriseRange?.length;
   }
 
   validateInputLimits(type: string): void {
+
+    this.filters.supriseRange = null;
 
     if (type === 'min' && (+this.filters.priceStart > +this.filters.priceEnd)) {
       setTimeout(() => {
@@ -183,7 +208,7 @@ export class SearchWidgetComponent implements OnInit {
 
     if (type === 'max' && (+this.filters.priceEnd < +this.filters.priceStart)) {
       setTimeout(() => {
-        this.filters.priceEnd = this.filters.priceStart;
+        this.filters.priceEnd = +this.filters.priceStart;
       }, 5)
     }
 
@@ -194,6 +219,29 @@ export class SearchWidgetComponent implements OnInit {
 
   changeRoomsValues(type: string): void {
     type === 'plus' ? this.filters.rooms++ : this.filters.rooms--;
+  }
+
+
+  redirectToBrowser(): void {
+    setTimeout(() => {
+      this.showWideWidget = false;
+      this.widgetHeight.emit(this.showWideWidget);
+    }, 0);
+
+
+
+    this.router.navigate(['/browse'], {
+      // relativeTo: this.router.url.includes('browse') ? this.activatedRoute : ['/browse'],
+      queryParams: {
+        page: 1,
+        spr: this.filters.supriseRange !== null,
+        priceStart: this.filters?.supriseRange?.length ? 1 : (+this.filters.priceStart || 1),
+        priceEnd: this.filters?.supriseRange?.length ? 1000000000 : (+this.filters.priceEnd || 1000000000),
+        location: this.filters?.location?.trim() ?? '',
+        rooms: this.filters.rooms
+      },
+      // queryParamsHandling: 'merge',
+    });
   }
 
 }

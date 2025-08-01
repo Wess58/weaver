@@ -1,5 +1,6 @@
 <div>
-	<div class="mini-widget" #miniWidget *ngIf="!showWideWidget" [@fadeInDownMini]>
+	<div class="mini-widget" [ngClass]="{'visible-theme':morphNavbar}" #miniWidget *ngIf="!showWideWidget"
+		[@fadeInDownMini]>
 		<div class="location" id="openLocation">
 			{{ filters.location?.length ? filters.location : 'Location'}}
 		</div>
@@ -7,13 +8,24 @@
 			{{ filters.supriseRange?.length ? filters.supriseRange : (!filters.priceStart ? 'Price range' :
 			(filters.priceStart | figureFormatter) + ' to ' + (filters.priceEnd | figureFormatter) )}}
 		</div>
-		<div class="rooms" #roomsWrap>
-			{{filters.rooms ? (filters.rooms + (filters.rooms > 1 ? " bedrooms" : " bedroom")) : 'Bedrooms'}}
+		<div class="rooms border-0" #roomsWrap>
+			{{ showRoomValue() ? (filters.rooms + (filters.rooms > 1 ? " bedrooms" : " bedroom")) : 'Bedrooms'}}
 		</div>
+		<button class="btn btn-search" (click)="checkIfFilterExists() ? redirectToBrowser() : $event.stopPropagation()">
+			<span class="icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+		</button>
+
+		<button class="btn btn-more-filters d-lg ms-3" (click)="$event.stopPropagation()"  [ngClass]="{'visible-theme':morphNavbar}">
+			<!-- appTooltip="More filters" tooltipPosition="bottom" -->
+			<i class="fa-solid fa-sliders me-lg-0 me-xl-2"></i>
+			<span class="d-none d-lg-none d-xl-inline">Filters</span>
+		</button>
 	</div>
 
+
 	<div class="filter-wrap" #miniWidget *ngIf="showWideWidget" [@fadeInDown]>
-		<div class="top-deck" *ngIf="router.url.length < 2">
+		<div class="top-deck">
+			<!-- *ngIf="router.url.length < 2" -->
 			<button class="btn btn-toggle" [ngClass]="{'active-toggle':currentToggle === 'all'}"
 				(click)="selectToggle('all')">All</button>
 			<button class="btn btn-toggle" [ngClass]="{'active-toggle':currentToggle === 'rent'}"
@@ -21,8 +33,9 @@
 			<button class="btn btn-toggle" [ngClass]="{'active-toggle':currentToggle === 'buy'}"
 				(click)="selectToggle('buy')">For Sale</button>
 		</div>
-		<div class="bottom-deck" [ngClass]="{'bordered':router.url.length > 2}">
-			<div class="wrap" id="openLocation">
+		<div class="bottom-deck bordered">
+			<!-- [ngClass]="{'bordered':router.url.length > 2}" -->
+			<div class="wrap" [ngClass]="{'active-wrap':openLocation}" id="openLocation">
 				<label for="location" id="openLocation">Location</label>
 				<input type="text" class="form-control" name="location" id="openLocationInput" (blur)="trimLocation()"
 					[(ngModel)]="filters.location" (ngModelChange)="searchLocation()" placeholder="Search locations"
@@ -35,7 +48,8 @@
 					</div>
 				</div>
 			</div>
-			<div class="wrap" #priceWrap>
+
+			<div class="wrap" [ngClass]="{'active-wrap':openPrice}" #priceWrap>
 				<label for="location">Price range </label>
 				@if (filters.supriseRange?.length) {
 				<span class="d-block place-holder"> {{filters.supriseRange}} </span>
@@ -95,7 +109,7 @@
 			</div>
 
 
-			<div class="wrap border-0" #roomsWrap>
+			<div class="wrap border-0" [ngClass]="{'active-wrap':openRooms}" #roomsWrap>
 				<label for="location">Number of bedrooms</label>
 
 				@if (!filters.rooms) {
@@ -117,10 +131,10 @@
 						</div>
 						<div class="controls">
 							<button class="btn btn-minus" (click)="changeRoomsValues('minus')"
-								[disabled]="filters.rooms < 1">
+								[disabled]="filters.rooms < 2">
 								<i class="fa-solid fa-minus"></i>
 							</button>
-							<span class="figure"> {{filters.rooms ?? 0 }} </span>
+							<span class="figure"> {{filters.rooms ?? 1 }} </span>
 							<button class="btn btn-plus" (click)="changeRoomsValues('plus')"
 								[disabled]="filters.rooms > 9 ">
 								<i class="fa-solid fa-plus"></i>
@@ -134,10 +148,10 @@
 				</div>
 			</div>
 			<div class="btn-wrap">
-				<button class="btn btn-search">
-					<span class="icon"><i class="fa-solid fa-magnifying-glass"></i></span>
-					<span>Search</span>
-					<!-- *ngIf="checkIfFilterExists()" -->
+				<button class="btn btn-search"
+					(click)="checkIfFilterExists() ? redirectToBrowser() : $event.stopPropagation()">
+					<span class="icon me-0 me-lg-2"><i class="fa-solid fa-magnifying-glass"></i></span>
+					<span class="d-md-none d-lg-inline">Search</span>
 				</button>
 			</div>
 		</div>

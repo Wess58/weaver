@@ -1,8 +1,7 @@
 # Copy the files from the dist to the container
 FROM nginx:stable
-COPY dist/web /usr/share/nginx/html
+COPY dist/web/browser /usr/share/nginx/html
 
 # Copy the config
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY ssl/certificate.crt /etc/nginx/certs/
-COPY ssl/private.key /etc/nginx/certs/
+# ng build && sudo docker build -t kitunda/weaverweb:1.0.0 . && sudo docker push kitunda/weaverweb:1.0.0

@@ -1,0 +1,32 @@
+<div class="card property-item">
+
+	<div class="property-bookmark">
+		<div class="position-relative">
+			<span class="icon"><i class="fa-regular fa-bookmark"></i></span>
+			<img src="assets/images/curvy-edge.svg" alt="icon-bg">
+		</div>
+	</div>
+
+	<div class="image-holder">
+		<img [src]="property.imageUrl" alt="photo">
+	</div>
+
+	<a class="property-content-wrapper"
+		[routerLink]="['/property',(property.id ?? 1),slugify((property.name?.length ? property.name : property.type) + ' in ' + property.location)]">
+		<div class="property-content">
+			<h5 class="property-title">
+				{{ (property.name?.length ? property.name : property.type) + " in " + property.location }}
+			</h5>
+			<div class="d-flex justify-content-between align-items-center">
+				<span class="property-price">
+					<!-- {{ property.price | currency: '' + 'KES ':'symbol':'1.0-0'}} -->
+					{{ 'KES ' + (property.price | figureFormatter)}}
+					<span class="fw-normal" *ngIf="property.isRental">&nbsp;/month</span>
+				</span>
+				<span class="property-rooms" [title]="property.rooms + ' Bedroom ' + property.type">
+					{{property.rooms + " BR"}} </span>
+			</div>
+		</div>
+	</a>
+
+</div>

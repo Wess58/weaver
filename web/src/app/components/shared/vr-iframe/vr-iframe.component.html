@@ -1,0 +1,10 @@
+<div class="iframe position-relative">
+	<iframe loading="eager" allow-popups allow-same-origin (mouseenter)="hoverIframe = true"
+		(mouseleave)="hoverIframe = false" [ngStyle]="{'height.px':height}"
+		title="(property.name?.length ? property.name : property.type) + ' in ' + property.location + ' VR tour'"
+		[src]="iframeLink | sanitizeUrl" frameborder="0"></iframe>
+
+	<a class="fullscreen-icon" [href]="iframeLink" target="_blank" appTooltip="Open in fullscreen window">
+		<i class="fa-solid fa-up-right-and-down-left-from-center" [ngClass]="{'fa-beat':hoverIframe}"></i>
+	</a>
+</div>

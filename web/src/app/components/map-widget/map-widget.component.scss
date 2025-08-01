@@ -1,0 +1,38 @@
+#map {
+  height: 100%;
+  width: 100%;
+}
+
+::ng-deep .leaflet-popup {
+  font-family: "Nunito", sans-serif;
+
+  .title {
+    font-weight: 700;
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+
+  .desc {
+    display: block;
+    margin-bottom: 5px;
+    color: #5f6063;
+  }
+
+  .price {
+    display: block;
+    font-weight: 900;
+    margin-bottom: 10px;
+  }
+
+  .btn-view {
+    background-color: #f08121;
+    color: #fff;
+    display: block;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border-radius: 4px;
+  }
+}
