@@ -4,9 +4,11 @@
 
 export const environment = {
   production: false,
+  // API_KEY:'sk-proj--osrrTsvTfHbsQpVA902ZSlxoZVKdP_'
   API_ENDPOINT: window.location.origin,
-  // GPT_API_KEY:'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'
+  // -OgEA'
   // API_ENDPOINT:'http://212.47.245.249:32025'
+  // TlUDe1oZ5iYzAxn6sdGdQBGnkywrnK7aRFYqqhtVpvPT3BlbkFJycxBJDyWVFzfTAWSwTTsJnH1gw7JIo3EDydInSEzVO_kSncm3ouwK5QiiCspXX_jOlfBn
 };
 
 /*
